@@ -1,47 +1,55 @@
 import React, { useEffect, useState } from 'react';
+import {connect } from 'react-redux';
 import Header from '../components/Header';
 import Search from '../components/Search';
 import Categories from '../components/Categories';
 import Carrousel from '../components/Carrousel';
 import CarrouselItem from '../components/CarrouselItem';
-import Footer from '../components/Footer';
-import useInitialState from '../hooks/useInitialState';
 import '../assets/styles/App.scss';
 
-const API = 'https://danieru-acero.github.io/PlatziVideoReact/initialState.json';
 
-const App = () => {
-  const InitialState = useInitialState(API);
+const Home = ( {myList, trends, originals}) => {
   return (
-    <div className="App">
-      <Header />
-      <Search />
-      {InitialState.mylist.length > 0 && 
+    <>
+      <Header/>
+      <Search isHome/>
+      {myList.length > 0 && 
         <Categories title="Mi lista">
           <Carrousel>
-          {InitialState.mylist.map(item =>
-            <CarrouselItem key={item.id} {...item}/>
+          {myList.map(item =>
+            <CarrouselItem 
+              key={item.id} 
+              {...item}
+              isList
+            />
           )}
           </Carrousel>
         </Categories>
       }
       <Categories title="Tendencias">
         <Carrousel>
-          {InitialState.trends.map(item =>
+          {trends.map(item =>
             <CarrouselItem key={item.id} {...item}/>
           )}
         </Carrousel>
       </Categories>
       <Categories title="Populares">
         <Carrousel>
-        {InitialState.originals.map(item =>
+        {originals.map(item =>
             <CarrouselItem key={item.id} {...item}/>
           )}
         </Carrousel>
       </Categories>
-      <Footer />
-    </div>
+    </>
   );
 };
 
-export default App;
+const mapStateToProps = state => {
+  return{
+    myList: state.myList,
+    trends: state.trends,
+    originals: state.originals,
+  };
+};
+
+export default connect(mapStateToProps, null)(Home)
